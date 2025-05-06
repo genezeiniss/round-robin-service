@@ -16,8 +16,7 @@ echo-service:
     - http://localhost:3003
   endpoint: /api/echo
   health-endpoint: /actuator/health
-  health-check-interval: 30s
-  retry-attempts: 3
-  timeout:
-    request: 5s
-    health: 2s
+
+timeout:
+  endpoint: 5s
+  health-check: 2s

@@ -1,6 +1,7 @@
 package com.genezeiniss.round_robin_service.service;
 
 import com.genezeiniss.round_robin_service.configuration.EchoServiceProperties;
+import com.genezeiniss.round_robin_service.exception.NoHealthyInstancesException;
 import com.genezeiniss.round_robin_service.rest.EchoServiceWebClient;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
@@ -19,38 +20,38 @@ public class RouteService {
 
     private final EchoServiceProperties echoServiceProperties;
     private final EchoServiceWebClient echoServiceWebClient;
-    @Getter
-    protected final Set<String> unhealthyInstances = ConcurrentHashMap.newKeySet();
 
-    protected Queue<String> echoServiceInstances;
+    @Getter
+    private final Set<String> unhealthyInstances = ConcurrentHashMap.newKeySet();
+    private final Queue<String> instanceQueue = new ConcurrentLinkedQueue<>();
 
     @PostConstruct
     private void init() {
-        echoServiceInstances = new ConcurrentLinkedQueue<>(echoServiceProperties.getInstances());
+        instanceQueue.addAll(echoServiceProperties.instances());
     }
 
-    public Map<String, Object> echo(Map<String, Object> request) {
+    public Map<String, Object> routeRequest(Map<String, Object> request) {
 
-        int maxAttempts = echoServiceInstances.size();
+        int attempts = instanceQueue.size();
 
-        while (maxAttempts > 0) {
-            String instance = echoServiceInstances.poll();
+        while (attempts-- > 0) {
+            String instance = instanceQueue.poll();
             try {
                 var response = echoServiceWebClient.echo(instance, request);
-                echoServiceInstances.offer(instance);
+                instanceQueue.offer(instance);
                 return response;
             } catch (Exception exception) {
                 log.error("Route to instance {} failed. Continue to the next instance", instance, exception);
                 unhealthyInstances.add(instance);
-                maxAttempts--;
             }
         }
-        throw new RuntimeException("No available echo-service instances");
+        throw new NoHealthyInstancesException("No available echo-service instances");
     }
 
-    protected void updateHealthyInstances(String instance){
-        unhealthyInstances.remove(instance);
-        echoServiceInstances.offer(instance);
-        log.info("Instance {} is healthy", instance);
+    protected void reinstateInstance(String instance){
+        if(unhealthyInstances.remove(instance)) {
+            instanceQueue.offer(instance);
+            log.info("Reinstated instance {}", instance);
+        }
     }
 }
