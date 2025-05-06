@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: round-robin-service
+
+logging:
+  level:
+      org.springframework.web.reactive.function.client.ExchangeFunctions: DEBUG
+      org.springframework.http.client: DEBUG
+      org.springframework.web.servlet.DispatcherServlet: DEBUG
+      org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+
+echo-service:
+  instances:
+    - http://localhost:3001
+    - http://localhost:3002
+    - http://localhost:3003
+  endpoint: /api/echo
+  health-endpoint: /actuator/health
+  health-check-interval: 30s
+  retry-attempts: 3
+  timeout:
+    request: 5s
+    health: 2s

@@ -10,9 +10,7 @@ Each request is forwarded to the next available Echo instance in rotation, and t
 ## Features
 - **Round Robin Request Distribution**: Evenly distributes HTTP POST requests across configured backend instances
 - **Fault Tolerance**: Automatically retries with next available instance if one fails
-- **Thread-safe Implementation**: Uses Atomic objects for safe concurrent access
-- **Easy Configuration**: Backend instances configured via properties file
-- **Retry Mechanism**: Configurable retry logic for failed requests
+- **Easy Configuration**: Backend instances configured via yml file
 
 ---
 ## **Technologies**
@@ -39,9 +37,11 @@ Each request is forwarded to the next available Echo instance in rotation, and t
 ---
 ## 🔧 Configuration
 
-The list of Echo Service URLs must be configured via application properties or as a command-line argument.
+The list of Echo Service URLs must be configured via application.yml.
 
-### Example:
-```properties
-echo-service.instances=http://localhost:3001/api/echo,http://localhost:3002/api/echo,http://localhost:3003/api/echo
-```
+---
+## API Endpoint
+
+**Method**: `POST /api/round-robin/echo`
+- Accepts: Any JSON payload
+- Returns: The same JSON payload from the selected backend instance
