@@ -43,7 +43,7 @@ public class RouteServiceTest {
 
     @Test
     @DisplayName("route request - send single request when all service instances are healthy")
-    public void routeRequest() {
+    void routeRequest() {
 
         when(echoServiceWebClient.echo(INSTANCE_1, TEST_REQUEST)).thenReturn(TEST_REQUEST);
 
@@ -57,7 +57,7 @@ public class RouteServiceTest {
 
     @Test
     @DisplayName("route request - send multiple requests when all service instances are healthy")
-    public void routeRequestMultipleRequests() {
+    void routeRequestMultipleRequests() {
 
         var expectedSequence = List.of(INSTANCE_1, INSTANCE_2, INSTANCE_3);
 
@@ -72,7 +72,7 @@ public class RouteServiceTest {
 
     @Test
     @DisplayName("route request - unhealthy instance is skipped")
-    public void routeRequestUnhealthyInstance() {
+    void routeRequestUnhealthyInstance() {
 
         when(echoServiceWebClient.echo(INSTANCE_1, TEST_REQUEST)).thenThrow(new RuntimeException());
         when(echoServiceWebClient.echo(INSTANCE_2, TEST_REQUEST)).thenReturn(TEST_REQUEST);
