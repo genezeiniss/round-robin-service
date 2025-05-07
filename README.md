@@ -23,6 +23,7 @@ Each request is forwarded to the next available Echo instance in rotation, and t
 ### Prerequisites
 - Java 21 JDK
 - Maven 3.8+
+- Running instance/s of echo-service: https://github.com/genezeiniss/echo-service
 
 ### Installation
 1. Clone the repository:
@@ -30,14 +31,23 @@ Each request is forwarded to the next available Echo instance in rotation, and t
    git clone https://github.com/genezeiniss/round-robin-service.git
    cd round-robin-service
 ```
-2. Build the project:
+
+2. Configure echo-service instances:
+
+- The list of Echo Service URLs must be configured via `application.yml`.
+
+
+3. Build the project:
 ```bash
     mvn clean install
 ```
----
-## 🔧 Configuration
 
-The list of Echo Service URLs must be configured via application.yml.
+4. Run the project:
+
+```bash
+    mvn spring-boot:run
+```
+
 
 ---
 ## API Endpoint
