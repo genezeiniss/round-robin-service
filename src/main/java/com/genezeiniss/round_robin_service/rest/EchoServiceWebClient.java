@@ -41,7 +41,7 @@ public class EchoServiceWebClient {
                     .block(endpointTimeout);
         } catch (RuntimeException exception) {
             if (exception.getCause() instanceof TimeoutException) {
-                throw new EchoServiceException(url, String.format("timeout after %s seconds", 5));
+                throw new EchoServiceException(url, String.format("timeout after %s seconds", endpointTimeout.getSeconds()));
             }
             throw new EchoServiceException(url, String.format("request failed: %s", exception.getMessage()));
         }
