@@ -25,10 +25,11 @@ public class RouteService {
 
     @Getter
     private final Set<String> unhealthyInstances = ConcurrentHashMap.newKeySet();
+    @Getter
     private final Queue<String> instanceQueue = new ConcurrentLinkedQueue<>();
 
     @PostConstruct
-    private void init() {
+    protected void init() {
         instanceQueue.addAll(echoServiceProperties.instances());
     }
 
