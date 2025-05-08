@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class RouteServiceTest {
         when(echoServiceProperties.instances())
                 .thenReturn(List.of(INSTANCE_1, INSTANCE_2, INSTANCE_3));
         routeService.init();
+        ReflectionTestUtils.setField(routeService, "retries", 4);
     }
 
     @Test

@@ -7,6 +7,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -28,6 +29,9 @@ public class RouteService {
     @Getter
     private final Queue<String> instanceQueue = new ConcurrentLinkedQueue<>();
 
+    @Value("${retries}")
+    private int retries;
+
     @PostConstruct
     protected void init() {
         instanceQueue.addAll(echoServiceProperties.instances());
@@ -35,7 +39,7 @@ public class RouteService {
 
     public Map<String, Object> routeRequest(Map<String, Object> request) {
 
-        int attempts = instanceQueue.size();
+        int attempts = Math.min(retries, instanceQueue.size());
 
         while (attempts-- > 0) {
             String instance = instanceQueue.poll();

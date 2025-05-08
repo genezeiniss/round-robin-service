@@ -17,6 +17,7 @@ echo-service:
   endpoint: /api/echo
   health-endpoint: /actuator/health
 
+retries: 3
 timeout:
   endpoint: 5s
   health-check: 2s
