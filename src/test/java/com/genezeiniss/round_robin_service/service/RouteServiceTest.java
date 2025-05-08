@@ -97,7 +97,7 @@ public class RouteServiceTest {
         var exception = assertThrows(NoHealthyInstancesException.class,
                 () -> routeService.routeRequest(TEST_REQUEST), "expected exception");
 
-        assertEquals("No available echo-service instances", exception.getMessage(), "exception message");
+        assertEquals("Connection to echo-service failed", exception.getMessage(), "exception message");
         assertEquals(3, routeService.getUnhealthyInstances().size(), "unhealthy instances set size");
         assertTrue(routeService.getInstanceQueue().isEmpty(), "queue is empty");
     }
@@ -128,5 +128,21 @@ public class RouteServiceTest {
 
         assertEquals(3, routeService.getInstanceQueue().size(), "queue size");
         assertTrue(routeService.getUnhealthyInstances().isEmpty(), "unhealthy instances set is empty");
+    }
+
+    @Test
+    @DisplayName("route request - one try available")
+    void routeRequestUnhealthyInstanceOneRetryAvailable() {
+
+        ReflectionTestUtils.setField(routeService, "retries", 1);
+        when(echoServiceWebClient.echo(INSTANCE_1, TEST_REQUEST)).thenThrow(new RuntimeException());
+
+        var exception = assertThrows(NoHealthyInstancesException.class,
+                () -> routeService.routeRequest(TEST_REQUEST), "expected exception");
+
+        assertEquals("Connection to echo-service failed", exception.getMessage(), "exception message");
+
+        assertEquals(1, routeService.getUnhealthyInstances().size(), "unhealthy instances set size");
+        assertEquals(2, routeService.getInstanceQueue().size(), "queue size");
     }
 }

@@ -52,7 +52,7 @@ public class RouteService {
                 unhealthyInstances.add(instance);
             }
         }
-        throw new NoHealthyInstancesException("No available echo-service instances");
+        throw new NoHealthyInstancesException("Connection to echo-service failed");
     }
 
     protected void reinstateInstance(String instance){
