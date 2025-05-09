@@ -1,18 +1,14 @@
 package com.genezeiniss.round_robin_service.service;
 
 import com.genezeiniss.round_robin_service.rest.EchoServiceWebClient;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.mockito.Mockito.*;
 
@@ -25,27 +21,8 @@ public class HealthCheckServiceTest {
     private EchoServiceWebClient echoServiceWebClient;
     @Mock
     private RouteService routeService;
+    @InjectMocks
     private HealthCheckService healthCheckService;
-    private ExecutorService executor;
-
-    @BeforeEach
-    void setup() {
-        // direct executor for synchronous execution in tests
-        executor = Executors.newSingleThreadExecutor();
-        healthCheckService = new HealthCheckService(echoServiceWebClient, routeService) {
-
-            Executor getExecutor() {
-                return Runnable::run;
-            }
-        };
-    }
-
-    @AfterEach
-    void tearDown() {
-        if (executor != null) {
-            executor.shutdown();
-        }
-    }
 
     @Test
     @DisplayName("check health - no unhealthy instances")
